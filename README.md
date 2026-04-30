@@ -10,6 +10,10 @@
 
 **Repository:** [bhedanikhilkumar-code/noninvasive-disease-risk-predictor](https://github.com/bhedanikhilkumar-code/noninvasive-disease-risk-predictor)
 
+<!-- REPO_HEALTH_BADGE_START -->
+[![Repository Health](https://github.com/bhedanikhilkumar-code/noninvasive-disease-risk-predictor/actions/workflows/repository-health.yml/badge.svg)](https://github.com/bhedanikhilkumar-code/noninvasive-disease-risk-predictor/actions/workflows/repository-health.yml)
+<!-- REPO_HEALTH_BADGE_END -->
+
 </div>
 
 ---
@@ -61,8 +65,12 @@ This README is written as a **portfolio-grade project document**: it explains th
 | [Architecture](docs/ARCHITECTURE.md) | System layers, workflow, data/state model, and extension points. |
 | [Case Study](docs/CASE_STUDY.md) | Product framing, decisions, tradeoffs, and portfolio story. |
 | [Roadmap](docs/ROADMAP.md) | Practical next steps for turning the project into a stronger product. |
+| [Quality Standard](docs/QUALITY.md) | Repository health checks, review standards, and quality gates. |
+| [Review Checklist](docs/REVIEW_CHECKLIST.md) | Final share/recruiter review checklist for a stronger GitHub impression. |
 | [Contributing](CONTRIBUTING.md) | Branching, commit, review, and quality guidelines. |
 | [Security](SECURITY.md) | Responsible disclosure and safe configuration notes. |
+| [Support](SUPPORT.md) | How to ask for help or report issues clearly. |
+| [Code of Conduct](CODE_OF_CONDUCT.md) | Collaboration expectations for respectful project activity. |
 
 <!-- PROJECT_DOCS_HUB_END -->
 

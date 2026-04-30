@@ -1,0 +1,69 @@
+name: Repository Health
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  repository-health:
+    name: Documentation and structure check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate professional repository files
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          required_files = [
+              "README.md",
+              "CONTRIBUTING.md",
+              "SECURITY.md",
+              "SUPPORT.md",
+              "CODE_OF_CONDUCT.md",
+              ".github/CODEOWNERS",
+              ".github/PULL_REQUEST_TEMPLATE.md",
+              ".github/ISSUE_TEMPLATE/bug_report.yml",
+              ".github/ISSUE_TEMPLATE/feature_request.yml",
+              "docs/ARCHITECTURE.md",
+              "docs/CASE_STUDY.md",
+              "docs/ROADMAP.md",
+              "docs/QUALITY.md",
+              "docs/REVIEW_CHECKLIST.md",
+          ]
+
+          missing = [file for file in required_files if not Path(file).exists()]
+          if missing:
+              print("Missing professional repository files:")
+              for file in missing:
+                  print(f"- {file}")
+              raise SystemExit(1)
+
+          readme = Path("README.md").read_text(encoding="utf-8", errors="ignore")
+          readme_checks = {
+              "README has enough detail": len(readme) >= 1500,
+              "README has documentation hub": "Documentation Hub" in readme,
+              "README links architecture": "docs/ARCHITECTURE.md" in readme,
+              "README links roadmap": "docs/ROADMAP.md" in readme,
+              "README links quality standard": "docs/QUALITY.md" in readme,
+          }
+          failed = [name for name, ok in readme_checks.items() if not ok]
+          if failed:
+              print("README quality checks failed:")
+              for name in failed:
+                  print(f"- {name}")
+              raise SystemExit(1)
+
+          suspicious_names = {".env", ".env.local", ".env.production", "id_rsa", "id_ed25519"}
+          suspicious = [str(path) for path in Path(".").rglob("*") if path.is_file() and path.name in suspicious_names]
+          for path in suspicious:
+              print(f"::warning file={path}::Review sensitive-looking tracked file")
+
+          print("Repository health check passed.")
+          PY
