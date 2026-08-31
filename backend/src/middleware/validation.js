@@ -1,19 +1,13 @@
 const isFiniteNumber = (value) => typeof value === 'number' && Number.isFinite(value);
 
+const isSessionId = (value) =>
+  typeof value === 'string' && /^[a-f0-9-]{20,80}$/i.test(value);
+
 export const validatePredictionInput = (payload) => {
   const errors = [];
   const requiredFields = [
-    'age',
-    'gender',
-    'bmi',
-    'bp_systolic',
-    'bp_diastolic',
-    'glucose',
-    'heart_rate',
-    'smoking',
-    'alcohol',
-    'physical_activity',
-    'symptoms_text'
+    'session_id', 'age', 'gender', 'bmi', 'bp_systolic', 'bp_diastolic',
+    'glucose', 'heart_rate', 'smoking', 'alcohol', 'physical_activity', 'symptoms_text'
   ];
 
   requiredFields.forEach((field) => {
@@ -22,6 +16,7 @@ export const validatePredictionInput = (payload) => {
     }
   });
 
+  if (!isSessionId(payload.session_id)) errors.push('session_id is invalid.');
   if (!isFiniteNumber(payload.age) || payload.age < 1 || payload.age > 120) errors.push('age must be between 1 and 120.');
   if (!isFiniteNumber(payload.bmi) || payload.bmi < 10 || payload.bmi > 60) errors.push('bmi must be between 10 and 60.');
   if (!isFiniteNumber(payload.bp_systolic) || payload.bp_systolic < 70 || payload.bp_systolic > 250) errors.push('bp_systolic must be between 70 and 250.');
@@ -43,6 +38,11 @@ export const validatePredictionInput = (payload) => {
   if (typeof payload.symptoms_text !== 'string' || payload.symptoms_text.trim().length < 3) {
     errors.push('symptoms_text must be a descriptive string (at least 3 characters).');
   }
+  if (typeof payload.symptoms_text === 'string' && payload.symptoms_text.length > 1000) {
+    errors.push('symptoms_text must be 1000 characters or fewer.');
+  }
 
   return errors;
 };
+
+export const validateSessionId = (value) => isSessionId(value);
