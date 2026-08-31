@@ -6,9 +6,15 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 MODEL_PATH = 'model.joblib'
+FEATURE_COUNT = 11
 
 
 def generate_data(samples=2000, random_state=42):
+  """Generate deterministic demo data for the portfolio prototype.
+
+  IMPORTANT: this is synthetic data, not clinical training data. The model
+  must not be presented as medically validated or diagnostic.
+  """
   rng = np.random.default_rng(random_state)
 
   age = rng.integers(18, 86, size=samples)
@@ -20,18 +26,21 @@ def generate_data(samples=2000, random_state=42):
   smoking = rng.integers(0, 2, size=samples)
   alcohol = rng.integers(0, 2, size=samples)
   physical_activity = rng.integers(0, 3, size=samples)  # 0 low, 1 medium, 2 high
-  gender = rng.integers(0, 2, size=samples)  # 1 male, 0 non-male
+  gender = rng.integers(0, 2, size=samples)  # demo-only binary encoding
+  symptom_burden = rng.integers(0, 6, size=samples)
 
   risk_signal = (
     0.018 * age
     + 0.055 * bmi
     + 0.022 * (bp_systolic - 120)
+    + 0.012 * (bp_diastolic - 80)
     + 0.028 * (glucose - 100)
     + 0.015 * (heart_rate - 75)
     + 0.75 * smoking
     + 0.30 * alcohol
     - 0.35 * physical_activity
     + 0.10 * gender
+    + 0.12 * symptom_burden
     + rng.normal(0, 1.2, size=samples)
   )
 
@@ -48,7 +57,8 @@ def generate_data(samples=2000, random_state=42):
     smoking,
     alcohol,
     physical_activity,
-    gender
+    gender,
+    symptom_burden,
   ])
 
   return X, y
@@ -56,17 +66,19 @@ def generate_data(samples=2000, random_state=42):
 
 def train_model():
   X, y = generate_data()
-  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+  X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+  )
 
   pipeline = Pipeline([
     ('scaler', StandardScaler()),
-    ('model', LogisticRegression(max_iter=1000))
+    ('model', LogisticRegression(max_iter=1000, random_state=42))
   ])
 
   pipeline.fit(X_train, y_train)
   accuracy = pipeline.score(X_test, y_test)
   joblib.dump(pipeline, MODEL_PATH)
-  print(f'Model trained and saved to {MODEL_PATH}. Validation accuracy: {accuracy:.3f}')
+  print(f'Model trained and saved to {MODEL_PATH}. Synthetic-data validation accuracy: {accuracy:.3f}')
 
 
 if __name__ == '__main__':
