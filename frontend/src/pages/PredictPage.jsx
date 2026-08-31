@@ -24,10 +24,13 @@ const PredictPage = () => {
 
   const onChange = (e) => {
     const { name, value, type, checked } = e.target;
-
     setForm((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : ['gender', 'symptoms_text', 'physical_activity'].includes(name) ? value : Number(value)
+      [name]: type === 'checkbox'
+        ? checked
+        : ['gender', 'symptoms_text', 'physical_activity'].includes(name)
+          ? value
+          : Number(value)
     }));
   };
 
@@ -38,9 +41,11 @@ const PredictPage = () => {
 
     try {
       const record = await postPrediction(form);
+      sessionStorage.setItem('last-prediction-result', JSON.stringify(record.output));
       navigate('/result', { state: { result: record.output } });
     } catch (err) {
-      setError(err.response?.data?.errors?.join(', ') || err.response?.data?.message || 'Prediction request failed');
+      const errors = err.response?.data?.errors;
+      setError(Array.isArray(errors) ? errors.join(' ') : err.response?.data?.message || 'Prediction request failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -48,71 +53,82 @@ const PredictPage = () => {
 
   return (
     <section className="card">
-      <h2>Prediction Form</h2>
+      <div className="section-heading">
+        <div>
+          <p className="eyebrow">Health screening prototype</p>
+          <h2>Risk Assessment</h2>
+        </div>
+        <span className="privacy-badge">Anonymous session</span>
+      </div>
+      <p className="muted">Enter basic non-invasive indicators. This prototype provides an educational risk score, not a diagnosis.</p>
+
       <form className="grid" onSubmit={onSubmit}>
         <label>
-          age
-          <input name="age" type="number" value={form.age} onChange={onChange} />
+          Age
+          <input name="age" type="number" min="1" max="120" value={form.age} onChange={onChange} required />
         </label>
         <label>
-          gender
-          <select name="gender" value={form.gender} onChange={onChange}>
-            <option value="male">male</option>
-            <option value="female">female</option>
-            <option value="other">other</option>
+          Gender
+          <select name="gender" value={form.gender} onChange={onChange} required>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
           </select>
         </label>
         <label>
-          bmi
-          <input name="bmi" type="number" step="0.1" value={form.bmi} onChange={onChange} />
+          BMI
+          <input name="bmi" type="number" min="10" max="60" step="0.1" value={form.bmi} onChange={onChange} required />
         </label>
         <label>
-          bp_systolic
-          <input name="bp_systolic" type="number" value={form.bp_systolic} onChange={onChange} />
+          Systolic BP
+          <input name="bp_systolic" type="number" min="70" max="250" value={form.bp_systolic} onChange={onChange} required />
         </label>
         <label>
-          bp_diastolic
-          <input name="bp_diastolic" type="number" value={form.bp_diastolic} onChange={onChange} />
+          Diastolic BP
+          <input name="bp_diastolic" type="number" min="40" max="150" value={form.bp_diastolic} onChange={onChange} required />
         </label>
         <label>
-          glucose
-          <input name="glucose" type="number" step="0.1" value={form.glucose} onChange={onChange} />
+          Glucose
+          <input name="glucose" type="number" min="40" max="400" step="0.1" value={form.glucose} onChange={onChange} required />
         </label>
         <label>
-          heart_rate
-          <input name="heart_rate" type="number" value={form.heart_rate} onChange={onChange} />
+          Heart Rate
+          <input name="heart_rate" type="number" min="30" max="220" value={form.heart_rate} onChange={onChange} required />
         </label>
         <label>
-          physical_activity
-          <select name="physical_activity" value={form.physical_activity} onChange={onChange}>
-            <option value="low">low</option>
-            <option value="medium">medium</option>
-            <option value="high">high</option>
+          Physical Activity
+          <select name="physical_activity" value={form.physical_activity} onChange={onChange} required>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
           </select>
         </label>
         <label className="checkbox-row">
           <input name="smoking" type="checkbox" checked={form.smoking} onChange={onChange} />
-          smoking (yes/no)
+          Smoking
         </label>
         <label className="checkbox-row">
           <input name="alcohol" type="checkbox" checked={form.alcohol} onChange={onChange} />
-          alcohol (yes/no)
+          Alcohol use
         </label>
-        <label style={{ gridColumn: '1 / -1' }}>
-          symptoms_text
+        <label className="full-width">
+          Symptoms / notes
           <textarea
             name="symptoms_text"
             value={form.symptoms_text}
             onChange={onChange}
-            rows={3}
-            placeholder="e.g. fatigue, headaches, poor sleep"
+            rows={4}
+            maxLength={1000}
+            placeholder="e.g. fatigue, headache, poor sleep"
+            required
           />
+          <small>{form.symptoms_text.length}/1000 characters</small>
         </label>
         <button className="btn" type="submit" disabled={loading}>
-          {loading ? 'Predicting...' : 'Get Risk Score'}
+          {loading ? 'Calculating…' : 'Get Risk Score'}
         </button>
       </form>
-      {error && <p className="error">{error}</p>}
+      {error && <p className="error" role="alert">{error}</p>}
     </section>
   );
 };
