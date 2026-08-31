@@ -1,246 +1,167 @@
-<div align="center">
-
 # Noninvasive Disease Risk Predictor
 
-### Final year project: A web-based system that predicts early disease risk (e.g., diabetes/heart risk) using non-invasive user inputs like symptoms, lifestyle, and basic vitals. Provides risk score, insights, and analytics dashboard.
+A final-year B.Tech project demonstrating a web-based, non-invasive health-risk screening workflow. Users enter basic vitals, lifestyle signals, and symptom notes; the application sends the data through a Node.js API to a Python ML service and returns a 0–100 demo risk score with Low / Medium / High classification and explanations.
 
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=111111)
-![GitHub repo](https://img.shields.io/badge/GitHub-noninvasive-disease-risk-predictor-0F172A?style=for-the-badge&logo=github)
-![Documentation](https://img.shields.io/badge/Documentation-Pro%20Level-7C3AED?style=for-the-badge)
+> **Important:** This repository currently uses **synthetic/generated training data**. It is an educational software/ML prototype, not a clinically validated model, diagnostic device, or medical-advice system.
 
-**Repository:** [bhedanikhilkumar-code/noninvasive-disease-risk-predictor](https://github.com/bhedanikhilkumar-code/noninvasive-disease-risk-predictor)
+## Architecture
 
-<!-- REPO_HEALTH_BADGE_START -->
-[![Repository Health](https://github.com/bhedanikhilkumar-code/noninvasive-disease-risk-predictor/actions/workflows/repository-health.yml/badge.svg)](https://github.com/bhedanikhilkumar-code/noninvasive-disease-risk-predictor/actions/workflows/repository-health.yml)
-<!-- REPO_HEALTH_BADGE_END -->
-
-</div>
-
----
-
-## Executive Overview
-
-Final year project: A web-based system that predicts early disease risk (e.g., diabetes/heart risk) using non-invasive user inputs like symptoms, lifestyle, and basic vitals. Provides risk score, insights, and analytics dashboard.
-
-This README is written as a **portfolio-grade project document**: it explains the product idea, technical approach, architecture, workflows, setup process, engineering standards, and future roadmap so a reviewer can understand both the codebase and the thinking behind it.
-
-## Product Positioning
-
-| Question | Answer |
-| --- | --- |
-| **Who is it for?** | Users, reviewers, recruiters, and developers who want to understand the project quickly. |
-| **What problem does it solve?** | It turns a practical idea into a structured software project with clear workflows and maintainable implementation direction. |
-| **Why it matters?** | The project demonstrates product thinking, stack selection, feature planning, and clean documentation discipline. |
-| **Current focus** | Professional polish, understandable architecture, and portfolio-ready presentation. |
-
-## Repository Snapshot
-
-| Area | Details |
-| --- | --- |
-| Visibility | Public portfolio repository |
-| Primary stack | `JavaScript` |
-| Repository topics | `analytics-dashboard`, `final-year-project`, `healthcare`, `javascript`, `machine-learning`, `risk-prediction`, `web-app` |
-| Useful commands | Documented in setup section |
-| Key dependencies | No dependency manifest detected |
-
-## Topics
-
-`analytics-dashboard` · `final-year-project` · `healthcare` · `javascript` · `machine-learning` · `risk-prediction` · `web-app`
-
-## Key Capabilities
-
-| Capability | Description |
-| --- | --- |
-| **AI-assisted workflow** | Uses intelligent scoring, generation, classification, or recommendation patterns. |
-| **Data pipeline thinking** | Separates input preparation, processing, results, and user-facing interpretation. |
-| **Explainable output** | Focuses on insights, confidence, risk, or summaries users can act on. |
-| **Experiment-ready** | Good base for improving datasets, prompts, models, and evaluation loops. |
-
-<!-- PROJECT_DOCS_HUB_START -->
-
-## Documentation Hub
-
-| Document | Purpose |
-| --- | --- |
-| [Architecture](docs/ARCHITECTURE.md) | System layers, workflow, data/state model, and extension points. |
-| [Case Study](docs/CASE_STUDY.md) | Product framing, decisions, tradeoffs, and portfolio story. |
-| [Roadmap](docs/ROADMAP.md) | Practical next steps for turning the project into a stronger product. |
-| [Quality Standard](docs/QUALITY.md) | Repository health checks, review standards, and quality gates. |
-| [Review Checklist](docs/REVIEW_CHECKLIST.md) | Final share/recruiter review checklist for a stronger GitHub impression. |
-| [Contributing](CONTRIBUTING.md) | Branching, commit, review, and quality guidelines. |
-| [Security](SECURITY.md) | Responsible disclosure and safe configuration notes. |
-| [Support](SUPPORT.md) | How to ask for help or report issues clearly. |
-| [Code of Conduct](CODE_OF_CONDUCT.md) | Collaboration expectations for respectful project activity. |
-
-<!-- PROJECT_DOCS_HUB_END -->
-
-## Detailed Product Blueprint
-
-### Experience Map
-
-```mermaid
-flowchart TD
-    A[Discover project purpose] --> B[Understand main user workflow]
-    B --> C[Review architecture and stack]
-    C --> D[Run locally or inspect code]
-    D --> E[Evaluate quality and roadmap]
-    E --> F[Decide next improvement or deployment path]
+```text
+React + Vite frontend
+        │
+        ▼
+Node.js + Express API
+        │
+        ├── MongoDB (session-scoped history)
+        │
+        ▼
+FastAPI ML service
+        │
+        ▼
+StandardScaler + LogisticRegression
+        │
+        ▼
+Risk probability → 0–100 score → Low/Medium/High
 ```
 
-### Feature Depth Matrix
+## Current ML Logic
 
-| Layer | What reviewers should look for | Why it matters |
-| --- | --- | --- |
-| Product | Clear user problem, target audience, and workflow | Shows product thinking beyond tutorial-level code |
-| Interface | Screens, pages, commands, or hardware interaction points | Demonstrates how users actually experience the project |
-| Logic | Validation, state transitions, service methods, processing flow | Proves the project can handle real use cases |
-| Data | Local storage, database, files, APIs, or device input/output | Explains how information moves through the system |
-| Quality | Tests, linting, setup clarity, and roadmap | Makes the project easier to trust, extend, and review |
+The demo model uses 11 features:
 
-### Conceptual Data / State Model
+- Age
+- BMI
+- Systolic blood pressure
+- Diastolic blood pressure
+- Glucose
+- Heart rate
+- Smoking
+- Alcohol use
+- Physical activity
+- Gender (demo encoding)
+- Recognized symptom-keyword burden
 
-| Entity / State | Purpose | Example fields or responsibilities |
-| --- | --- | --- |
-| User input | Starts the main workflow | Form values, commands, uploaded files, device readings |
-| Domain model | Represents the project-specific object | Transaction, note, shipment, event, avatar, prediction, song, or task |
-| Service layer | Applies rules and coordinates actions | Validation, scoring, formatting, persistence, API calls |
-| Storage/output | Keeps or presents the result | Database row, local cache, generated file, chart, dashboard, or device action |
-| Feedback loop | Helps improve the next interaction | Status message, analytics, error handling, recommendations, roadmap item |
+`ml-service/train.py` generates 2,000 synthetic records and creates labels from a transparent weighted risk signal. The model is then trained with an 80/20 stratified split using `StandardScaler` and `LogisticRegression`.
 
-### Professional Differentiators
+The score is the positive-class probability multiplied by 100. Classification thresholds are:
 
-- **Documentation-first presentation:** A reviewer can understand the project without guessing the intent.
-- **Diagram-backed explanation:** Architecture and workflow diagrams make the system easier to evaluate quickly.
-- **Real-world framing:** The README describes users, outcomes, and operational flow rather than only listing files.
-- **Extension-ready roadmap:** Future improvements are scoped so the project can keep growing cleanly.
-- **Portfolio alignment:** The project is positioned as part of a consistent, professional GitHub portfolio.
+- `< 35` → Low
+- `35–69.99` → Medium
+- `>= 70` → High
 
-## Architecture Overview
+The explanations are a separate, human-readable rule layer; they are not model-generated medical explanations.
 
-```mermaid
-flowchart LR
-    User[User] --> UI[Web UI / Views]
-    UI --> State[Client State & Forms]
-    State --> API[API / App Logic]
-    API --> Data[(Data Store / Files)]
-    API --> Integrations[External Integrations]
-```
+## Application Flow
 
-## Core Workflow
+1. User opens the React application.
+2. A random anonymous browser session ID is stored locally.
+3. User submits validated health inputs.
+4. Express validates and normalizes the request.
+5. Express calls the FastAPI ML service.
+6. The ML service validates inputs, derives symptom burden, and runs the model.
+7. Express stores the input/output under that anonymous session.
+8. The frontend displays the score and explanation.
+9. History and dashboard endpoints only return records for the current session ID.
 
-```mermaid
-sequenceDiagram
-    participant U as User
-    participant A as Application
-    participant L as Logic Layer
-    participant D as Data/Device Layer
-    U->>A: Submit input
-    A->>L: Preprocess data
-    L->>D: Run model/scoring
-    D-->>L: State/result
-    L-->>A: Return insight with confidence
-    A-->>U: Updated experience
-```
-
-## How the Project is Organized
+## Repository Structure
 
 ```text
 noninvasive-disease-risk-predictor/
-├── 📁 frontend
-│   ├── 📁 src
-│   ├── 📄 Dockerfile
-│   ├── 📄 index.html
-│   ├── 📄 package.json
-│   └── 📄 vite.config.js
-├── 📁 backend
-│   ├── 📁 src
-│   ├── 📄 Dockerfile
-│   └── 📄 package.json
-├── 📁 ml-service
-│   ├── 📄 app.py
-│   ├── 📄 Dockerfile
-│   ├── 📄 requirements.txt
-│   └── 📄 train.py
-├── 📄 docker-compose.yml
+├── frontend/       # React + Vite UI
+├── backend/        # Express API + MongoDB persistence
+├── ml-service/     # FastAPI + scikit-learn model
+├── docs/            # Architecture, case study, roadmap and quality docs
+└── docker-compose.yml
 ```
 
-## Engineering Notes
+## Local Development
 
-- **Separation of concerns:** UI, business logic, data/services, and platform concerns are documented as separate layers.
-- **Scalability mindset:** The project structure is ready for new screens, services, tests, and deployment improvements.
-- **Portfolio quality:** README content is designed to communicate value before someone even opens the code.
-- **Maintainability:** Naming, setup steps, and roadmap items make future work easier to plan and review.
-- **User-first framing:** Features are described by the value they provide, not just the technology used.
-
-## Local Setup
+### Option A — Docker Compose
 
 ```bash
-# Clone the repository
-git clone <repo-url>
-cd <repo-name>
-
-# Follow the stack-specific setup notes in the source files.
+docker compose up --build
 ```
 
-## Suggested Quality Checks
+Services:
 
-Before shipping or presenting this project, run the checks that match the stack:
+- Frontend: `http://localhost:5173`
+- Backend: `http://localhost:5000`
+- ML service: `http://localhost:8000`
+- MongoDB: `localhost:27017`
 
-| Check | Purpose |
-| --- | --- |
-| Format/lint | Keep code style consistent and reviewer-friendly. |
-| Static analysis | Catch type, syntax, and framework-level issues early. |
-| Unit/widget tests | Validate important logic and user-facing workflows. |
-| Manual smoke test | Confirm the main flow works from start to finish. |
-| README review | Ensure documentation matches the actual repository state. |
+### Option B — Run services separately
 
-## Roadmap
+Backend requires `MONGODB_URI` and optionally `ML_SERVICE_URL` / `FRONTEND_URL`.
 
-- Evaluation dataset and benchmark scripts
-- Model confidence calibration
-- Explainability layer
-- Deployment-ready API packaging
+```bash
+cd backend
+npm install
+npm run dev
+```
 
-## Professional Review Checklist
+Frontend:
 
-- [ ] Clear project purpose and audience
-- [ ] Feature list aligned with real user workflows
-- [ ] Architecture documented with diagrams
-- [ ] Setup steps tested on a clean machine
-- [ ] Screenshots or demo GIFs added where possible
-- [ ] Environment variables documented without exposing secrets
-- [ ] Tests/lint commands documented
-- [ ] Roadmap shows practical next steps
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-## Screenshots / Demo Suggestions
+ML service:
 
-Add these assets when available to make the repository even stronger:
+```bash
+cd ml-service
+pip install -r requirements.txt
+uvicorn app:app --reload --port 8000
+```
 
-| Asset | Recommended content |
-| --- | --- |
-| Hero screenshot | Main dashboard, home screen, or landing page |
-| Workflow GIF | 10-20 second walkthrough of the core feature |
-| Architecture image | Exported version of the Mermaid diagram |
-| Before/after | Show how the project improves an existing workflow |
+## Engineering Hardening Included
 
-## Contribution Notes
+- Strict request validation at both API and ML boundaries.
+- Request body size limit on Express.
+- Helmet security headers and restricted CORS methods.
+- Generic production API errors instead of leaking server exception messages.
+- ML service timeout handling.
+- Anonymous session scoping for history and dashboard data.
+- No-store caching headers for health/history/stat responses.
+- Refresh-safe result page using session storage.
+- Responsive and keyboard-accessible frontend styling.
+- User-facing disclosure of synthetic-data and non-diagnostic limitations.
 
-This project can be extended through focused, well-scoped improvements:
+## Known Limitations
 
-1. Pick one feature or documentation improvement.
-2. Create a small branch with a clear name.
-3. Keep changes easy to review.
-4. Update this README if setup, features, or architecture changes.
-5. Open a pull request with screenshots or test notes when possible.
+This project should **not** be described as a medically accurate disease predictor in its current form.
+
+1. Training data is synthetic rather than a clinically sourced dataset.
+2. There is no external clinical validation or calibration study.
+3. The model is a single binary logistic-regression classifier rather than disease-specific models.
+4. Gender encoding is simplified for the demo and should not be treated as a clinical representation.
+5. Symptom processing is keyword-based, not clinical NLP.
+6. Anonymous session IDs are privacy scoping, not authentication or authorization.
+7. Production deployment would require stronger identity, privacy, audit, monitoring, and security controls.
+
+## Recommended Next ML Milestones
+
+1. Select a specific disease/risk target and define the intended population.
+2. Use a licensed, ethically sourced, clinically appropriate dataset.
+3. Establish train/validation/test splits without leakage.
+4. Compare suitable baseline and advanced models.
+5. Report precision, recall, F1, ROC-AUC, PR-AUC, calibration, and confusion matrix—not accuracy alone.
+6. Add subgroup/fairness evaluation and missing-data handling.
+7. Add explainability tied to model features, with clinical review.
+8. Validate prospectively before making any clinical claims.
+
+## Documentation
+
+- `docs/ARCHITECTURE.md` — system structure and workflow
+- `docs/CASE_STUDY.md` — product framing and engineering decisions
+- `docs/ROADMAP.md` — future work
+- `docs/QUALITY.md` — repository quality standard
+- `docs/REVIEW_CHECKLIST.md` — presentation/recruiter checklist
+- `SECURITY.md` — responsible security reporting
+- `CONTRIBUTING.md` — contribution workflow
+- `SUPPORT.md` — support guidance
+- `CODE_OF_CONDUCT.md` — collaboration standard
 
 ## License
 
-Add or update the license file based on how you want others to use this project. If this is a portfolio-only project, document that clearly before accepting external contributions.
-
----
-
-<div align="center">
-
-**Built and documented with a focus on professional presentation, practical workflows, and clean engineering communication.**
-
-</div>
+See `LICENSE`.
