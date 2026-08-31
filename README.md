@@ -66,9 +66,9 @@ The explanations are a separate, human-readable rule layer; they are not model-g
 
 ```text
 noninvasive-disease-risk-predictor/
-├── frontend/       # React + Vite UI
-├── backend/        # Express API + MongoDB persistence
-├── ml-service/     # FastAPI + scikit-learn model
+├── frontend/        # React + Vite UI
+├── backend/         # Express API + MongoDB persistence
+├── ml-service/      # FastAPI + scikit-learn model
 ├── docs/            # Architecture, case study, roadmap and quality docs
 └── docker-compose.yml
 ```
@@ -150,10 +150,11 @@ This project should **not** be described as a medically accurate disease predict
 7. Add explainability tied to model features, with clinical review.
 8. Validate prospectively before making any clinical claims.
 
-## Documentation
+## Documentation Hub
 
 - `docs/ARCHITECTURE.md` — system structure and workflow
 - `docs/CASE_STUDY.md` — product framing and engineering decisions
+- `docs/CODE_AUDIT.md` — this audit and hardening pass
 - `docs/ROADMAP.md` — future work
 - `docs/QUALITY.md` — repository quality standard
 - `docs/REVIEW_CHECKLIST.md` — presentation/recruiter checklist
