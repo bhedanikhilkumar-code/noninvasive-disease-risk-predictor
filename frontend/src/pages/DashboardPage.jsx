@@ -6,32 +6,46 @@ const emptyStats = { total: 0, avgScore: 0, byLevel: { Low: 0, Medium: 0, High: 
 
 const DashboardPage = () => {
   const [stats, setStats] = useState(emptyStats);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    fetchStats().then(setStats).catch(() => setStats(emptyStats));
+    let active = true;
+    fetchStats()
+      .then((data) => { if (active) setStats({ ...emptyStats, ...data }); })
+      .catch(() => { if (active) setError('Dashboard data could not be loaded.'); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
   }, []);
 
   const data = Object.entries(stats.byLevel || {}).map(([level, count]) => ({ level, count }));
 
   return (
     <section className="card">
+      <p className="eyebrow">Your session analytics</p>
       <h2>Dashboard</h2>
-      <div className="stats-grid">
-        <div className="stat-box">Total Predictions: {stats.total}</div>
-        <div className="stat-box">Average Score: {stats.avgScore}</div>
-        <div className="stat-box">Predictions (Last 7 Days): {stats.last7Days}</div>
-      </div>
-      <div style={{ width: '100%', height: 280 }}>
-        <ResponsiveContainer>
-          <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="level" />
-            <YAxis allowDecimals={false} />
-            <Tooltip />
-            <Bar dataKey="count" fill="#2f6feb" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+      {loading && <p className="muted">Loading analytics…</p>}
+      {error && <p className="error" role="alert">{error}</p>}
+      {!loading && !error && (
+        <>
+          <div className="stats-grid">
+            <div className="stat-box"><span>Total predictions</span><strong>{stats.total}</strong></div>
+            <div className="stat-box"><span>Average score</span><strong>{stats.avgScore}</strong></div>
+            <div className="stat-box"><span>Last 7 days</span><strong>{stats.last7Days}</strong></div>
+          </div>
+          <div className="chart-wrap">
+            <ResponsiveContainer>
+              <BarChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="level" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Bar dataKey="count" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </>
+      )}
     </section>
   );
 };
