@@ -12,7 +12,7 @@ const inputSchema = new mongoose.Schema(
     smoking: { type: Boolean, required: true },
     alcohol: { type: Boolean, required: true },
     physical_activity: { type: String, enum: ['low', 'medium', 'high'], required: true },
-    symptoms_text: { type: String, required: true }
+    symptoms_text: { type: String, required: true, maxlength: 1000 }
   },
   { _id: false }
 );
@@ -28,6 +28,7 @@ const outputSchema = new mongoose.Schema(
 
 const predictionSchema = new mongoose.Schema(
   {
+    session_id: { type: String, required: true, index: true },
     createdAt: { type: Date, default: Date.now, index: true },
     input: { type: inputSchema, required: true },
     output: { type: outputSchema, required: true }
@@ -35,7 +36,8 @@ const predictionSchema = new mongoose.Schema(
   { versionKey: false }
 );
 
-predictionSchema.index({ 'output.level': 1 });
+predictionSchema.index({ session_id: 1, createdAt: -1 });
+predictionSchema.index({ session_id: 1, 'output.level': 1 });
 
 const Prediction = mongoose.model('Prediction', predictionSchema);
 export default Prediction;
