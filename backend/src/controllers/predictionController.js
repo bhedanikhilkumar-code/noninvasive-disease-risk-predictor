@@ -15,7 +15,7 @@ export const createPrediction = async (req, res) => {
       physical_activity: req.body.physical_activity.toLowerCase()
     };
 
-    const output = await requestPrediction(normalizedInput);
+    const output = await requestPrediction(normalizedInput, req.requestId);
     const outputErrors = validatePredictionOutput(output);
     if (outputErrors.length) {
       console.error(`Invalid ML response: ${outputErrors.join(', ')}`);

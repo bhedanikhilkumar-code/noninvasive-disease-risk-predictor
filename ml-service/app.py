@@ -4,7 +4,7 @@ from typing import List, Literal
 
 import joblib
 import numpy as np
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field, model_validator
 
 from train import train_model
@@ -56,6 +56,14 @@ EXPECTED_FEATURE_NAMES = [
   'heart_rate', 'smoking', 'alcohol', 'physical_activity',
   'gender_male', 'gender_female', 'gender_other'
 ]
+
+
+@app.middleware('http')
+async def request_id_middleware(request: Request, call_next):
+  request_id = request.headers.get('x-request-id') or os.urandom(16).hex()
+  response = await call_next(request)
+  response.headers['x-request-id'] = request_id
+  return response
 
 
 def map_activity(value: str) -> int:
