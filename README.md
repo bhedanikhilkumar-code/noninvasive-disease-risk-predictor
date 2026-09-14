@@ -193,6 +193,8 @@ npm test
 The tests cover valid payloads, malformed bodies, impossible blood-pressure relationships, unknown
 fields, oversized symptoms, and invalid numeric or enum values. The API also limits JSON request bodies
 to 32 KB to reduce abuse from oversized requests. code.
+The integration tests also exercise liveness, MongoDB readiness, structured 404/400/413 responses,
+prediction-service-unavailable handling, request IDs, and rate limiting. code.
 
 Malformed JSON returns HTTP 400 and oversized JSON bodies return HTTP 413 with JSON error messages. code.
 The backend `/health` endpoint reports process liveness, while `/ready` reports whether MongoDB is connected. code.
