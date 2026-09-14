@@ -23,6 +23,16 @@ app.use(morgan('dev'));
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 app.use('/api', predictionRoutes);
 
+app.use((error, _req, res, next) => {
+  if (error.type === 'entity.too.large') {
+    return res.status(413).json({ message: 'Request body is too large' });
+  }
+  if (error instanceof SyntaxError && error.status === 400 && error.body) {
+    return res.status(400).json({ message: 'Request body contains invalid JSON' });
+  }
+  return next(error);
+});
+
 connectDatabase()
   .then(() => {
     app.listen(port, () => {
