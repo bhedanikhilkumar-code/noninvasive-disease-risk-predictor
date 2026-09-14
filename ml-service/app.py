@@ -4,7 +4,7 @@ from typing import List, Literal
 
 import joblib
 import numpy as np
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field, model_validator
 
 from train import train_model
@@ -156,6 +156,9 @@ def model_info():
 
 @app.post('/predict', response_model=PredictResponse)
 def predict(payload: PredictRequest):
+  if model is None:
+    raise HTTPException(status_code=503, detail='Prediction model is not ready')
+
   activity_encoded = map_activity(payload.physical_activity)
 
   features = np.array([
