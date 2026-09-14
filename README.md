@@ -197,6 +197,7 @@ to 32 KB to reduce abuse from oversized requests. code.
 Malformed JSON returns HTTP 400 and oversized JSON bodies return HTTP 413 with JSON error messages. code.
 The backend `/health` endpoint reports process liveness, while `/ready` reports whether MongoDB is connected. code.
 Unknown routes and unexpected backend errors return structured JSON responses instead of framework-generated HTML. code.
+Each backend request receives an `x-request-id` response header; clients may provide one for correlated logs. code.
 - **Maintainability:** Naming, setup steps, and roadmap items make future work easier to plan and review.
 - **User-first framing:** Features are described by the value they provide, not just the technology used.
 

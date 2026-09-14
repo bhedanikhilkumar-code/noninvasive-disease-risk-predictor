@@ -25,7 +25,7 @@ export const createPrediction = async (req, res) => {
 
     return res.status(201).json(saved);
   } catch (error) {
-    console.error(`Prediction failed: ${error.message}`);
+    console.error(`[${req.requestId}] Prediction failed: ${error.message}`);
     return res.status(502).json({ message: 'Prediction service unavailable' });
   }
 };
@@ -38,7 +38,7 @@ export const getHistory = async (req, res) => {
     const rows = await Prediction.find().sort({ createdAt: -1 }).skip(skip).limit(limit).lean();
     return res.json(rows);
   } catch (error) {
-    console.error(`Unable to fetch history: ${error.message}`);
+    console.error(`[${req.requestId}] Unable to fetch history: ${error.message}`);
     return res.status(500).json({ message: 'Unable to fetch history' });
   }
 };
@@ -71,7 +71,7 @@ export const getStats = async (_req, res) => {
       last7Days
     });
   } catch (error) {
-    console.error(`Unable to fetch stats: ${error.message}`);
+    console.error(`[${req.requestId}] Unable to fetch stats: ${error.message}`);
     return res.status(500).json({ message: 'Unable to fetch stats' });
   }
 };

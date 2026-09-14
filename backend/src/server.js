@@ -4,6 +4,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
+import crypto from 'node:crypto';
 import predictionRoutes from './routes/predictionRoutes.js';
 import { connectDatabase } from './config/db.js';
 
@@ -13,6 +14,12 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(helmet());
+app.use((req, res, next) => {
+  const requestId = req.get('x-request-id') || crypto.randomUUID();
+  req.requestId = requestId;
+  res.setHeader('x-request-id', requestId);
+  next();
+});
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:5173'
