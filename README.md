@@ -200,6 +200,9 @@ Unknown routes and unexpected backend errors return structured JSON responses in
 Each backend request receives an `x-request-id` response header; clients may provide one for correlated logs. code.
 Prediction requests propagate this ID to the ML service, which returns the same header for end-to-end tracing. code.
 The prediction form includes this request ID in API failure feedback so support can locate the corresponding logs. code.
+The prediction endpoint allows 30 requests per client IP per minute and returns HTTP 429 with `Retry-After`
+when the limit is exceeded. This in-memory limit is suitable for a single instance; distributed deployments
+should use a shared rate-limit store. code.
 - **Maintainability:** Naming, setup steps, and roadmap items make future work easier to plan and review.
 - **User-first framing:** Features are described by the value they provide, not just the technology used.
 
