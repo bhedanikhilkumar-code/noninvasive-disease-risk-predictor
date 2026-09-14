@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { validatePredictionInput } from '../src/middleware/validation.js';
+import { validatePredictionInput, validatePredictionOutput } from '../src/middleware/validation.js';
 
 const validPayload = {
   age: 45,
@@ -57,4 +57,33 @@ test('rejects invalid numeric and enum values', () => {
   assert.ok(errors.includes('age must be between 1 and 120.'));
   assert.ok(errors.includes('gender must be one of: male, female, other.'));
   assert.ok(errors.includes('physical_activity must be one of: low, medium, high.'));
+});
+
+test('accepts a complete ML prediction response', () => {
+  assert.deepEqual(validatePredictionOutput({
+    score: 42.5,
+    level: 'Medium',
+    explanations: ['Elevated glucose may contribute to risk.'],
+    warnings: [],
+    model_version: 'synthetic-baseline-v3',
+    disclaimer: 'Screening estimate only.'
+  }), []);
+});
+
+test('rejects malformed ML prediction responses', () => {
+  const errors = validatePredictionOutput({
+    score: 140,
+    level: 'Unknown',
+    explanations: ['ok', 42],
+    warnings: 'none',
+    model_version: '',
+    disclaimer: null
+  });
+
+  assert.ok(errors.includes('Prediction score must be between 0 and 100.'));
+  assert.ok(errors.includes('Prediction level is invalid.'));
+  assert.ok(errors.includes('Prediction explanations must be an array of strings.'));
+  assert.ok(errors.includes('Prediction warnings must be an array of strings.'));
+  assert.ok(errors.includes('Prediction model_version is required.'));
+  assert.ok(errors.includes('Prediction disclaimer is required.'));
 });

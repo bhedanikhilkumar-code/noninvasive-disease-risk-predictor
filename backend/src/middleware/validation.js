@@ -61,3 +61,30 @@ export const validatePredictionInput = (payload) => {
 
   return errors;
 };
+
+export const validatePredictionOutput = (output) => {
+  const errors = [];
+  const levels = new Set(['Low', 'Medium', 'High']);
+
+  if (!output || typeof output !== 'object' || Array.isArray(output)) {
+    return ['Prediction response must be a JSON object.'];
+  }
+  if (!isFiniteNumber(output.score) || output.score < 0 || output.score > 100) {
+    errors.push('Prediction score must be between 0 and 100.');
+  }
+  if (!levels.has(output.level)) errors.push('Prediction level is invalid.');
+  if (!Array.isArray(output.explanations) || output.explanations.some((item) => typeof item !== 'string')) {
+    errors.push('Prediction explanations must be an array of strings.');
+  }
+  if (!Array.isArray(output.warnings) || output.warnings.some((item) => typeof item !== 'string')) {
+    errors.push('Prediction warnings must be an array of strings.');
+  }
+  if (typeof output.model_version !== 'string' || output.model_version.trim() === '') {
+    errors.push('Prediction model_version is required.');
+  }
+  if (typeof output.disclaimer !== 'string' || output.disclaimer.trim() === '') {
+    errors.push('Prediction disclaimer is required.');
+  }
+
+  return errors;
+};

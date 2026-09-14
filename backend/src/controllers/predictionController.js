@@ -1,6 +1,6 @@
 import Prediction from '../models/Prediction.js';
 import { requestPrediction } from '../services/mlClient.js';
-import { validatePredictionInput } from '../middleware/validation.js';
+import { validatePredictionInput, validatePredictionOutput } from '../middleware/validation.js';
 
 export const createPrediction = async (req, res) => {
   try {
@@ -16,6 +16,11 @@ export const createPrediction = async (req, res) => {
     };
 
     const output = await requestPrediction(normalizedInput);
+    const outputErrors = validatePredictionOutput(output);
+    if (outputErrors.length) {
+      console.error(`Invalid ML response: ${outputErrors.join(', ')}`);
+      return res.status(502).json({ message: 'Invalid prediction service response' });
+    }
     const saved = await Prediction.create({ input: normalizedInput, output });
 
     return res.status(201).json(saved);
