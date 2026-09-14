@@ -65,7 +65,9 @@ const PredictPage = () => {
       const record = await postPrediction(form);
       navigate('/result', { state: { result: record.output } });
     } catch (err) {
-      setError(err.response?.data?.errors?.join(', ') || err.response?.data?.message || 'Prediction request failed');
+      const message = err.response?.data?.errors?.join(', ') || err.response?.data?.message || 'Prediction request failed';
+      const requestId = err.response?.headers?.['x-request-id'];
+      setError(requestId ? `${message} Please contact support with request ID: ${requestId}` : message);
     } finally {
       setLoading(false);
     }
