@@ -1,0 +1,30 @@
+# dependencies
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# build artifacts
+frontend/dist/
+
+# env files
+.env
+*.env
+frontend/.env
+backend/.env
+ml-service/.env
+!**/.env.example
+
+# python
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+venv/
+
+# runtime
+*.db
+
+# os/editor
+.DS_Store
+.vscode/
+.idea/

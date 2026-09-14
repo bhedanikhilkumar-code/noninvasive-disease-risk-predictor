@@ -1,0 +1,31 @@
+name: Feature request
+description: Suggest a professional improvement for Noninvasive Disease Risk Predictor
+title: "feat: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / opportunity
+      description: What user or project problem does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Describe the feature or improvement.
+    validations:
+      required: true
+  - type: textarea
+    id: value
+    attributes:
+      label: Portfolio or product value
+      description: How does this make the project stronger?
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: This is small enough to review in one PR.
+        - label: Documentation should be updated with this change.
