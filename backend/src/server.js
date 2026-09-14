@@ -17,7 +17,7 @@ app.use(
     origin: process.env.FRONTEND_URL || 'http://localhost:5173'
   })
 );
-app.use(express.json());
+app.use(express.json({ limit: '32kb' }));
 app.use(morgan('dev'));
 
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));

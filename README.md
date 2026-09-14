@@ -179,7 +179,20 @@ dataset, patient-level splitting, external validation, calibration review, and m
 
 The ML service exposes `/ready` for model readiness and `/model-info` for non-sensitive model version,
 feature schema, thresholds, and evaluation metadata. An incompatible or older model artifact is detected
-at startup and replaced by a freshly generated baseline artifact. code.
+at startup and replaced by a freshly generated baseline artifact.
+
+### Backend Verification
+
+Run the backend regression tests from the repository root:
+
+```bash
+cd backend
+npm test
+```
+
+The tests cover valid payloads, malformed bodies, impossible blood-pressure relationships, unknown
+fields, oversized symptoms, and invalid numeric or enum values. The API also limits JSON request bodies
+to 32 KB to reduce abuse from oversized requests. code.
 - **Maintainability:** Naming, setup steps, and roadmap items make future work easier to plan and review.
 - **User-first framing:** Features are described by the value they provide, not just the technology used.
 
