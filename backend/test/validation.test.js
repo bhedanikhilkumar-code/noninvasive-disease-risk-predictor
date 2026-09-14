@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { validatePredictionInput, validatePredictionOutput } from '../src/middleware/validation.js';
+import { predictionRateLimit } from '../src/middleware/rateLimit.js';
 
 const validPayload = {
   age: 45,
@@ -86,4 +87,40 @@ test('rejects malformed ML prediction responses', () => {
   assert.ok(errors.includes('Prediction warnings must be an array of strings.'));
   assert.ok(errors.includes('Prediction model_version is required.'));
   assert.ok(errors.includes('Prediction disclaimer is required.'));
+});
+
+test('limits repeated prediction requests from one client', () => {
+  const ip = `test-${Date.now()}-${Math.random()}`;
+  let nextCalls = 0;
+  let statusCode;
+  let responseBody;
+  let retryAfter;
+
+  for (let index = 0; index < 31; index += 1) {
+    const response = {
+      setHeader: (name, value) => {
+        if (name === 'Retry-After') retryAfter = value;
+      },
+      status: (value) => {
+        statusCode = value;
+        return response;
+      },
+      json: (body) => {
+        responseBody = body;
+      }
+    };
+
+    predictionRateLimit(
+      { ip },
+      response,
+      () => {
+        nextCalls += 1;
+      }
+    );
+  }
+
+  assert.equal(nextCalls, 30);
+  assert.equal(statusCode, 429);
+  assert.equal(responseBody.message, 'Too many prediction requests. Please try again later.');
+  assert.ok(retryAfter > 0);
 });
