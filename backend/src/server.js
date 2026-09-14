@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import mongoose from 'mongoose';
 import predictionRoutes from './routes/predictionRoutes.js';
 import { connectDatabase } from './config/db.js';
 
@@ -21,6 +22,13 @@ app.use(express.json({ limit: '32kb' }));
 app.use(morgan('dev'));
 
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
+app.get('/ready', (_req, res) => {
+  const ready = mongoose.connection.readyState === 1;
+  return res.status(ready ? 200 : 503).json({
+    status: ready ? 'ready' : 'not_ready',
+    database: ready ? 'connected' : 'disconnected'
+  });
+});
 app.use('/api', predictionRoutes);
 
 app.use((error, _req, res, next) => {

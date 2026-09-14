@@ -195,6 +195,7 @@ fields, oversized symptoms, and invalid numeric or enum values. The API also lim
 to 32 KB to reduce abuse from oversized requests. code.
 
 Malformed JSON returns HTTP 400 and oversized JSON bodies return HTTP 413 with JSON error messages. code.
+The backend `/health` endpoint reports process liveness, while `/ready` reports whether MongoDB is connected. code.
 - **Maintainability:** Naming, setup steps, and roadmap items make future work easier to plan and review.
 - **User-first framing:** Features are described by the value they provide, not just the technology used.
 
