@@ -31,6 +31,10 @@ app.get('/ready', (_req, res) => {
 });
 app.use('/api', predictionRoutes);
 
+app.use((_req, res) => {
+  res.status(404).json({ message: 'Route not found' });
+});
+
 app.use((error, _req, res, next) => {
   if (error.type === 'entity.too.large') {
     return res.status(413).json({ message: 'Request body is too large' });
@@ -39,6 +43,11 @@ app.use((error, _req, res, next) => {
     return res.status(400).json({ message: 'Request body contains invalid JSON' });
   }
   return next(error);
+});
+
+app.use((error, _req, res, _next) => {
+  console.error(`Unhandled server error: ${error.message}`);
+  res.status(500).json({ message: 'Internal server error' });
 });
 
 connectDatabase()
