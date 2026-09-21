@@ -96,7 +96,7 @@ const DashboardPage = () => {
         </div>
 
         {/* Charts Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem', marginTop: '2rem' }}>
+        <div className="dashboard-charts-grid">
           {/* Bar Chart */}
           <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '.75rem', border: '1px solid #e2e8f0' }}>
             <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.1rem' }}>Cohort Stratification by Risk Tier</h3>
