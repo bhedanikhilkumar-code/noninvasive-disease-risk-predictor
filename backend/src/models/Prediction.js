@@ -24,7 +24,11 @@ const outputSchema = new mongoose.Schema(
     explanations: { type: [String], default: [] },
     warnings: { type: [String], default: [] },
     model_version: { type: String, required: true },
-    disclaimer: { type: String, required: true }
+    disclaimer: { type: String, required: true },
+    cardiovascular_score: { type: Number, min: 0, max: 100, required: false },
+    diabetes_score: { type: Number, min: 0, max: 100, required: false },
+    symptom_flags: { type: [String], default: [] },
+    recommendations: { type: [String], default: [] }
   },
   { _id: false }
 );

@@ -95,26 +95,60 @@ test('rejects oversized request bodies before prediction processing', async () =
   assert.deepEqual(oversized.body, { message: 'Request body is too large' });
 });
 
-test('returns 502 when the prediction service is unavailable', async () => {
-  const unavailable = await request('/api/predict', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({
-      age: 45,
-      gender: 'female',
-      bmi: 28,
-      bp_systolic: 130,
-      bp_diastolic: 85,
-      glucose: 110,
-      heart_rate: 78,
-      smoking: false,
-      alcohol: false,
-      physical_activity: 'medium',
-      symptoms_text: 'no current symptoms'
-    })
-  });
+test('requires API key when configured before accepting prediction requests', async () => {
+  const previousApiKey = process.env.API_KEY;
+  process.env.API_KEY = 'super-secret';
 
-  assert.equal(unavailable.response.status, 502);
-  assert.deepEqual(unavailable.body, { message: 'Prediction service unavailable' });
-  assert.ok(unavailable.response.headers.get('x-request-id'));
+  try {
+    const withoutKey = await request('/api/predict', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        age: 45,
+        gender: 'female',
+        bmi: 28,
+        bp_systolic: 130,
+        bp_diastolic: 85,
+        glucose: 110,
+        heart_rate: 78,
+        smoking: false,
+        alcohol: false,
+        physical_activity: 'medium',
+        symptoms_text: 'no current symptoms'
+      })
+    });
+
+    assert.equal(withoutKey.response.status, 401);
+    assert.deepEqual(withoutKey.body, { message: 'API key required' });
+
+    const withKey = await request('/api/predict', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': 'super-secret'
+      },
+      body: JSON.stringify({
+        age: 45,
+        gender: 'female',
+        bmi: 28,
+        bp_systolic: 130,
+        bp_diastolic: 85,
+        glucose: 110,
+        heart_rate: 78,
+        smoking: false,
+        alcohol: false,
+        physical_activity: 'medium',
+        symptoms_text: 'no current symptoms'
+      })
+    });
+
+    assert.equal(withKey.response.status, 502);
+    assert.deepEqual(withKey.body, { message: 'Prediction service unavailable' });
+  } finally {
+    if (previousApiKey === undefined) {
+      delete process.env.API_KEY;
+    } else {
+      process.env.API_KEY = previousApiKey;
+    }
+  }
 });

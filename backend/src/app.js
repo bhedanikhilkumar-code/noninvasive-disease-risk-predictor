@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import mongoose from 'mongoose';
 import crypto from 'node:crypto';
 import predictionRoutes from './routes/predictionRoutes.js';
+import { requireApiKey } from './middleware/apiKey.js';
 
 const app = express();
 
@@ -31,7 +32,7 @@ app.get('/ready', (_req, res) => {
     database: ready ? 'connected' : 'disconnected'
   });
 });
-app.use('/api', predictionRoutes);
+app.use('/api', requireApiKey, predictionRoutes);
 
 app.use((_req, res) => {
   res.status(404).json({ message: 'Route not found' });

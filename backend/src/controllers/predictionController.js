@@ -1,6 +1,9 @@
+import mongoose from 'mongoose';
 import Prediction from '../models/Prediction.js';
 import { requestPrediction } from '../services/mlClient.js';
 import { validatePredictionInput, validatePredictionOutput } from '../middleware/validation.js';
+
+const isDatabaseReady = () => mongoose.connection.readyState === 1;
 
 export const createPrediction = async (req, res) => {
   try {
@@ -32,6 +35,10 @@ export const createPrediction = async (req, res) => {
 
 export const getHistory = async (req, res) => {
   try {
+    if (!isDatabaseReady()) {
+      return res.status(503).json({ message: 'Database unavailable' });
+    }
+
     const limit = Math.min(Number(req.query.limit) || 50, 50);
     const skip = Math.max(Number(req.query.skip) || 0, 0);
 
@@ -43,8 +50,12 @@ export const getHistory = async (req, res) => {
   }
 };
 
-export const getStats = async (_req, res) => {
+export const getStats = async (req, res) => {
   try {
+    if (!isDatabaseReady()) {
+      return res.status(503).json({ message: 'Database unavailable' });
+    }
+
     const [levelAgg, avgAgg, last7Days] = await Promise.all([
       Prediction.aggregate([
         { $group: { _id: '$output.level', count: { $sum: 1 } } }

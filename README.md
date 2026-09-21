@@ -168,8 +168,8 @@ noninvasive-disease-risk-predictor/
 
 - **Separation of concerns:** UI, business logic, data/services, and platform concerns are documented as separate layers.
 - **Scalability mindset:** The project structure is ready for new screens, services, tests, and deployment improvements.
+- **Security baseline:** The backend supports an optional `API_KEY` environment variable to protect API routes when deployed beyond a local demo environment. If `API_KEY` is unset, the app remains easy to run locally without auth; if it is set, any request to `/api/*` must send the matching `x-api-key` header or `Authorization: Bearer <key>`.
 - **Portfolio quality:** README content is designed to communicate value before someone even opens the code.
-
 ### ML Safety Status
 
 The current model is a reproducible synthetic-data baseline for engineering demos. Training now records

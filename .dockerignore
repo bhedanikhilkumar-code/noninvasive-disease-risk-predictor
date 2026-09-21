@@ -1,0 +1,6 @@
+node_modules
+.git
+.tmp-pip
+dist
+__pycache__
+*.pyc
