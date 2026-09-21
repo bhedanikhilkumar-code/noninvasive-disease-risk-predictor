@@ -18,3 +18,9 @@ export const fetchStats = async () => {
   const { data } = await api.get('/stats');
   return data;
 };
+
+export const deleteHistoryItem = async (id) => {
+  const { data } = await api.delete(`/history/${id}`);
+  return data;
+};
+

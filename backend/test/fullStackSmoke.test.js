@@ -134,12 +134,12 @@ test('predicts successfully across backend and ML service with request tracing',
   assert.ok(Number.isFinite(body.output.score));
   assert.ok(Array.isArray(body.output.explanations));
   assert.ok(Array.isArray(body.output.warnings));
-  assert.equal(body.output.model_version, 'synthetic-baseline-v3');
+  assert.equal(body.output.model_version, 'pulsepredict-clinical-v2.1');
   assert.match(body.output.disclaimer, /screening estimate/i);
 
   const mlReady = await fetch('http://127.0.0.1:8001/ready');
   const mlState = await mlReady.json();
   assert.equal(mlState.status, 'ready');
-  assert.equal(mlState.model_version, 'synthetic-baseline-v3');
+  assert.equal(mlState.model_version, 'pulsepredict-clinical-v2.1');
   assert.equal(mlOutput.includes('Uvicorn') || mlOutput.length >= 0, true);
 });

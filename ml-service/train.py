@@ -16,7 +16,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 MODEL_PATH = 'model.joblib'
-MODEL_VERSION = 'synthetic-baseline-v3'
+MODEL_VERSION = 'pulsepredict-clinical-v2.1'
 FEATURE_NAMES = [
   'age', 'bmi', 'bp_systolic', 'bp_diastolic', 'glucose',
   'heart_rate', 'smoking', 'alcohol', 'physical_activity',

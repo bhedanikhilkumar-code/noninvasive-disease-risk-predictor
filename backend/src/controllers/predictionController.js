@@ -86,3 +86,24 @@ export const getStats = async (req, res) => {
     return res.status(500).json({ message: 'Unable to fetch stats' });
   }
 };
+
+export const deletePrediction = async (req, res) => {
+  try {
+    if (!isDatabaseReady()) {
+      return res.status(503).json({ message: 'Database unavailable' });
+    }
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid record ID' });
+    }
+    const deleted = await Prediction.findByIdAndDelete(id);
+    if (!deleted) {
+      return res.status(404).json({ message: 'Record not found' });
+    }
+    return res.json({ message: 'Record deleted successfully', id });
+  } catch (error) {
+    console.error(`[${req.requestId}] Unable to delete prediction: ${error.message}`);
+    return res.status(500).json({ message: 'Unable to delete prediction' });
+  }
+};
+

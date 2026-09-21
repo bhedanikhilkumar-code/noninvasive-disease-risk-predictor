@@ -152,3 +152,10 @@ test('requires API key when configured before accepting prediction requests', as
     }
   }
 });
+
+test('handles delete history requests appropriately when database is disconnected', async () => {
+  const res = await request('/api/history/65a123456789012345678901', { method: 'DELETE' });
+  assert.equal(res.response.status, 503);
+  assert.deepEqual(res.body, { message: 'Database unavailable' });
+});
+
